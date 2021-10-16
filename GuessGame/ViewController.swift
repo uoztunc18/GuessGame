@@ -47,7 +47,6 @@ class ViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
             
             return
-            
         }
 
         guard let intInput = Int(input) else {
@@ -66,7 +65,6 @@ class ViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
             
             return
-         
         }
         
         print("Entered number: \(intInput)")
@@ -81,10 +79,10 @@ class ViewController: UIViewController {
             } else {
                 if (guessHandler.isGuessBigger(guessedNumber : intInput)) {
                     arrowImage.isHidden = false
-                    arrowImage.image = UIImage(systemName: "arrow.down")
+                    arrowImage.image = UIImage(systemName: "arrow.up")
                 } else {
                     arrowImage.isHidden = false
-                    arrowImage.image = UIImage(systemName: "arrow.up")
+                    arrowImage.image = UIImage(systemName: "arrow.down")
                 }
             }
         }
