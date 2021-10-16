@@ -21,21 +21,19 @@ class GuessHandler {
 
     func calculateWinner(guessedNumber : Int) -> Bool {
         
-//        if tries == 1 {
-//            self.delegate?.lastTry()
-//        }
-//
-//        if guessedNumber == pickedNumber {
-//            self.delegate?.lastTry()
-//        }
+        let result = guessedNumber == pickedNumber ? true : false
         
         reduceTry()
-        
-        if (tries == 0) {
-            self.delegate?.resetButton()
+
+        if (tries == 1 && !result) {
+            self.delegate?.lastTry()
         }
         
-        return guessedNumber == pickedNumber ? true : false
+        if (result) {
+            tries = 0
+        }
+        
+        return result
     }
     
     func isGuessBigger(guessedNumber : Int) -> Bool {

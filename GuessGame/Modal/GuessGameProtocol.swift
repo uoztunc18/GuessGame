@@ -10,6 +10,5 @@ import Foundation
 protocol GuessGameProtocol : AnyObject {
     
     func lastTry()
-    func resetButton()
     
 }

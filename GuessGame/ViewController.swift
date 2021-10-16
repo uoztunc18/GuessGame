@@ -10,119 +10,111 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var textLabel: UILabel!
-    @IBOutlet weak var advice: UILabel!
     @IBOutlet weak var field: UITextField!
+    @IBOutlet weak var arrowImage: UIImageView!
     @IBOutlet weak var goButton: UIButton!
+    @IBOutlet weak var playButton: UIButton!
     
     let guessHandler = GuessHandler()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guessHandler.pickNumber()
-        guessHandler.resetTries()
         guessHandler.delegate = self
         // Do any additional setup after loading the view.
     }
-
+    
+    @IBAction func pressPlay(_ sender: Any) {
+        guessHandler.pickNumber()
+        print("Picked number: \(String(describing: guessHandler.pickedNumber))")
+        guessHandler.resetTries()
+        playButton.isHidden = true
+        textLabel.isHidden = false
+        textLabel.text = "Good luck"
+        field.isHidden = false
+        goButton.isHidden = false
+    }
+    
     @IBAction func makeGuess(_ sender: Any) {
-        
-//        if guessHandler.tries == 0 || textLabel.text == "Congratulations" {
-//            resetGame()
-//            textLabel.text = "Good luck"
-//        } else {
-//
-//            guard let input = field.text else {
-//                fatalError("error")
-//            }
-//
-//            guard let intInput = Int(input) else {
-//                fatalError("error")
-//            }
-//
-//            print("Entered number: \(intInput)")
-//
-//            if guessHandler.calculateWinner(guessedNumber: intInput) {
-//                textLabel.text = "Congratulations"
-//            } else {
-//                if guessHandler.tries == 0 {
-//                    textLabel.text = "You lost"
-//                } else {
-//                    if (guessHandler.isGuessBigger(guessedNumber : intInput)) {
-//                        textLabel.text = "Go down"
-//                    } else {
-//                        textLabel.text = "Go up"
-//                    }
-//                    // textLabel.text = "Try again"
-//                }
-//            }
-//        }
-        
-        if (guessHandler.tries != 0) {
-            guard let input = field.text else {
-                fatalError("error")
-            }
 
-            guard let intInput = Int(input) else {
-                fatalError("error")
-            }
+        guard let input = field.text else {
+            return
+        }
+
+        if (input == "") {
+
+            let alert = UIAlertController(title: "Empty input", message: "Enter a number", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             
-            print("Entered number: \(intInput)")
+            return
             
-            if (guessHandler.calculateWinner(guessedNumber: intInput)) {
-                win()
-                guessHandler.tries = 0
-            } else {
-                if (guessHandler.tries == 0) {
-                    lost()
-                } else {
-                    if (guessHandler.isGuessBigger(guessedNumber : intInput)) {
-                        advice.text = "Go down"
-                    } else {
-                        advice.text = "Go up"
-                    }
-                    textLabel.text = "Try again"
-                }
-            }
+        }
+
+        guard let intInput = Int(input) else {
             
-//            if (guessHandler.tries == 0) {
-//                goButton.setTitle("Play again", for: .normal)
-//            }
+            let alert = UIAlertController(title: "Wrong type of input", message: "Enter a number", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             
-        } else {
-            resetGame()
+            return
         }
         
+        if ((intInput > 10) || (intInput < 1)) {
+            
+            let alert = UIAlertController(title: "Guess out of range", message: "Enter a number from 1 to 10", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+         
+        }
+        
+        print("Entered number: \(intInput)")
+        
+        textLabel.text = ""
+        
+        if (guessHandler.calculateWinner(guessedNumber: intInput)) {
+            win()
+        } else {
+            if (guessHandler.tries == 0) {
+                lost()
+            } else {
+                if (guessHandler.isGuessBigger(guessedNumber : intInput)) {
+                    arrowImage.isHidden = false
+                    arrowImage.image = UIImage(systemName: "arrow.down")
+                } else {
+                    arrowImage.isHidden = false
+                    arrowImage.image = UIImage(systemName: "arrow.up")
+                }
+            }
+        }
+        
+        field.text = ""
     }
                     
     func win() {
+        arrowImage.isHidden = true
+        playButton.isHidden = false
+        playButton.setTitle("Play again", for: .normal)
+        textLabel.isHidden = false
         textLabel.text = "Congratulations"
-        advice.text = ""
-        goButton.setTitle("Play again", for: .normal)
+        field.isHidden = true
+        goButton.isHidden = true
     }
     
     func lost() {
+        arrowImage.isHidden = true
+        playButton.isHidden = false
+        playButton.setTitle("Play again", for: .normal)
+        textLabel.isHidden = false
         textLabel.text = "You lost"
-        advice.text = ""
-        goButton.setTitle("Play again", for: .normal)
-    }
-    
-    func resetGame() {
-        guessHandler.resetTries()
-        textLabel.text = "Good luck"
-        goButton.setTitle("Go", for: .normal)
-        guessHandler.pickNumber()
-        
-        print("Picked number: \(guessHandler.pickedNumber)")
+        field.isHidden = true
+        goButton.isHidden = true
     }
 }
 
 extension ViewController : GuessGameProtocol {
     func lastTry() {
-        goButton.setTitle("Play again", for: .normal)
+        textLabel.text = "Last chance!"
     }
-    
-    func resetButton() {
-        goButton.setTitle("Play again", for: .normal)
-    }
-    
 }
