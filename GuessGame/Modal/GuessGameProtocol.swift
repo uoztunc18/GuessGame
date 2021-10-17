@@ -10,5 +10,7 @@ import Foundation
 protocol GuessGameProtocol : AnyObject {
     
     func lastTry()
+    func guessIsBig()
+    func guessIsSmall()
     
 }
